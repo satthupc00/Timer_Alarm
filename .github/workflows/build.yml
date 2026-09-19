@@ -18,8 +18,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Accept Android SDK licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      - name: Accept licenses & install Android SDK components
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME" -name sdkmanager -type f | head -n 1)
+          echo "Using sdkmanager at: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -27,7 +31,23 @@ jobs:
           gradle-version: 8.7
 
       - name: Build debug APK
-        run: gradle assembleDebug --no-daemon
+        id: build
+        continue-on-error: true
+        run: gradle assembleDebug --stacktrace 2>&1 | tee build_log.txt
+
+      - name: Report failure details as commit comment
+        if: steps.build.outcome == 'failure'
+        run: |
+          ERR=$(tail -c 55000 build_log.txt)
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments" \
+            -d "$(jq -n --arg body "$ERR" '{body: $body}')"
+
+      - name: Fail job if build failed
+        if: steps.build.outcome == 'failure'
+        run: exit 1
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
