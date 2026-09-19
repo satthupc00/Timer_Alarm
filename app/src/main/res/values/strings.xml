@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Timer_Alarm</string>
+    <string name="watermark">Created by Mondiro</string>
+
+    <string name="breakfast_title">Nhắc mua đồ sáng cho Ba</string>
+    <string name="breakfast_desc">Bật để mỗi ngày lúc 11:00 sáng, app sẽ hiện nhắc nhở toàn màn hình mua/đặt đồ ăn sáng cho Ba.</string>
+
+    <string name="data_title">Nhắc hết hạn gói 3G Mobifone</string>
+    <string name="data_desc">Tự động đọc SMS từ Mobifone (đầu số 9199) để phát hiện ngày hết hạn gói data, không cần nhập tay.</string>
+    <string name="data_status_none">Chưa phát hiện gói data nào từ SMS.</string>
+
+    <string name="btn_dismiss">Đã hiểu</string>
+    <string name="btn_snooze">Nhắc lại sau 15 phút</string>
+</resources>
