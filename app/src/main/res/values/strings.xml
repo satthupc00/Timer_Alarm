@@ -8,6 +8,10 @@
     <string name="data_title">Nhắc hết hạn gói 3G Mobifone</string>
     <string name="data_desc">Tự động đọc SMS từ Mobifone (đầu số 9199) để phát hiện ngày hết hạn gói data, không cần nhập tay.</string>
     <string name="data_status_none">Chưa phát hiện gói data nào từ SMS.</string>
+    <string name="btn_rescan">🔄 Quét lại tin nhắn cũ</string>
+    <string name="rescan_need_permission">Cần cấp quyền đọc SMS để quét tin nhắn cũ.</string>
+    <string name="rescan_not_found">Không tìm thấy tin nhắn gói data nào từ Mobifone trong hộp thư.</string>
+    <string name="rescan_found">Đã tìm thấy và cập nhật ngày hết hạn từ tin nhắn cũ.</string>
 
     <string name="btn_dismiss">Đã hiểu</string>
     <string name="btn_snooze">Nhắc lại sau 15 phút</string>
