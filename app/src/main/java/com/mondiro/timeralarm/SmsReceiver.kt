@@ -20,9 +20,10 @@ class SmsReceiver : BroadcastReceiver() {
     companion object {
         private const val SENDER_FILTER = "9199"
 
-        // Bắt các dạng: "đến hết ngày 25/09/2026", "hết hạn 25/09", "HSD: 25/09/2026"...
+        // Khớp đúng mẫu SMS Mobifone thật (không dấu):
+        // "...Han su dung den 15/09/2026 08:15:49. De kiem tra..."
         private val DATE_PATTERN: Pattern = Pattern.compile(
-            "(\\d{1,2})[/-](\\d{1,2})(?:[/-](\\d{2,4}))?"
+            "[Hh]an\\s+su\\s+dung\\s+den\\s+(\\d{1,2})/(\\d{1,2})/(\\d{4})\\s+(\\d{1,2}):(\\d{1,2}):(\\d{1,2})"
         )
     }
 
@@ -56,28 +57,26 @@ class SmsReceiver : BroadcastReceiver() {
         }
     }
 
-    /** Trả về mốc thời gian (millis, 23:59 ngày đó) nếu tìm thấy ngày trong nội dung SMS. */
+    /**
+     * Trả về mốc thời gian hết hạn chính xác (đến từng giây) được nêu trong SMS,
+     * ví dụ "Han su dung den 15/09/2026 08:15:49" -> 15/09/2026 08:15:49.
+     */
     private fun extractExpiryDate(body: String): Long? {
         val matcher = DATE_PATTERN.matcher(body)
-        var last: Long? = null
+        if (!matcher.find()) return null
 
-        while (matcher.find()) {
-            val day = matcher.group(1)?.toIntOrNull() ?: continue
-            val month = matcher.group(2)?.toIntOrNull() ?: continue
-            if (day !in 1..31 || month !in 1..12) continue
+        val day = matcher.group(1)?.toIntOrNull() ?: return null
+        val month = matcher.group(2)?.toIntOrNull() ?: return null
+        val year = matcher.group(3)?.toIntOrNull() ?: return null
+        val hour = matcher.group(4)?.toIntOrNull() ?: 23
+        val minute = matcher.group(5)?.toIntOrNull() ?: 59
+        val second = matcher.group(6)?.toIntOrNull() ?: 0
 
-            val cal = Calendar.getInstance()
-            val yearGroup = matcher.group(3)
-            val year = when {
-                yearGroup == null -> cal.get(Calendar.YEAR)
-                yearGroup.length == 2 -> 2000 + yearGroup.toInt()
-                else -> yearGroup.toInt()
-            }
+        if (day !in 1..31 || month !in 1..12) return null
 
-            cal.set(year, month - 1, day, 23, 59, 0)
-            cal.set(Calendar.MILLISECOND, 0)
-            last = cal.timeInMillis
-        }
-        return last
+        val cal = Calendar.getInstance()
+        cal.set(year, month - 1, day, hour, minute, second)
+        cal.set(Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
     }
 }
