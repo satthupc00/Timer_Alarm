@@ -59,13 +59,16 @@ class MainActivity : AppCompatActivity() {
         switchBreakfast.isChecked = prefs.getBoolean(Prefs.KEY_BREAKFAST_ON, false)
         switchData.isChecked = prefs.getBoolean(Prefs.KEY_DATA_ON, false)
         updateExpiryStatusText()
+        if (switchBreakfast.isChecked) NotificationHelper.showBreakfastStatus(this)
 
         switchBreakfast.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(Prefs.KEY_BREAKFAST_ON, isChecked).apply()
             if (isChecked) {
                 AlarmScheduler.scheduleBreakfastAlarm(this)
+                NotificationHelper.showBreakfastStatus(this)
             } else {
                 AlarmScheduler.cancelBreakfastAlarm(this)
+                NotificationHelper.hideBreakfastStatus(this)
             }
         }
 

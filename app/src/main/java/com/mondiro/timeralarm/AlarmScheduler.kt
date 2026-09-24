@@ -16,6 +16,7 @@ object Prefs {
     const val KEY_DATA_ON = "data_on"
     const val KEY_EXPIRY_TIMESTAMP = "expiry_timestamp" // millis, 0 = none
     const val KEY_LAST_REMINDER_STAGE = "last_reminder_stage" // 0 = none sent yet
+    const val KEY_BREAKFAST_DISMISSED_DATE = "breakfast_dismissed_date" // "yyyy-MM-dd" của ngày đã bấm "Đã hiểu"
 }
 
 /**
@@ -27,6 +28,7 @@ object AlarmScheduler {
 
     private const val REQ_BREAKFAST = 1001
     private const val REQ_DATA_EXPIRY = 1002
+    private const val REQ_BREAKFAST_REPEAT = 1003
 
     // ---------- Breakfast: nhắc hằng ngày lúc 11:00 ----------
 
@@ -47,6 +49,29 @@ object AlarmScheduler {
         val intent = Intent(context, BreakfastAlarmReceiver::class.java)
         val pi = PendingIntent.getBroadcast(
             context, REQ_BREAKFAST, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        am.cancel(pi)
+        cancelBreakfastRepeat(context)
+    }
+
+    // ---------- Breakfast: nhắc lặp lại mỗi 10 phút (từ 11:00 tới 12:00) nếu chưa bấm "Đã hiểu" ----------
+
+    fun scheduleBreakfastRepeat(context: Context, atMillis: Long) {
+        val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, BreakfastAlarmReceiver::class.java)
+        val pi = PendingIntent.getBroadcast(
+            context, REQ_BREAKFAST_REPEAT, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, atMillis, pi)
+    }
+
+    fun cancelBreakfastRepeat(context: Context) {
+        val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, BreakfastAlarmReceiver::class.java)
+        val pi = PendingIntent.getBroadcast(
+            context, REQ_BREAKFAST_REPEAT, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         am.cancel(pi)

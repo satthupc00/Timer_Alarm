@@ -58,6 +58,13 @@ class FullScreenAlarmActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnDismiss).setOnClickListener {
             stopAlarmEffects()
+            if (type != TYPE_DATA_EXPIRY) {
+                // Bấm "Đã hiểu" cho mục đồ ăn sáng -> đánh dấu đã tắt hôm nay, dừng luôn vòng lặp nhắc mỗi 10 phút
+                Prefs.get(this).edit()
+                    .putString(Prefs.KEY_BREAKFAST_DISMISSED_DATE, BreakfastAlarmReceiver.todayDateString())
+                    .apply()
+                AlarmScheduler.cancelBreakfastRepeat(this)
+            }
             finish()
         }
         findViewById<Button>(R.id.btnSnooze).setOnClickListener {

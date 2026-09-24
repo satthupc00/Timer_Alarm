@@ -11,6 +11,7 @@ class BootReceiver : BroadcastReceiver() {
 
         if (prefs.getBoolean(Prefs.KEY_BREAKFAST_ON, false)) {
             AlarmScheduler.scheduleBreakfastAlarm(context)
+            NotificationHelper.showBreakfastStatus(context)
         }
         if (prefs.getBoolean(Prefs.KEY_DATA_ON, false)) {
             AlarmScheduler.rescheduleDataExpiryFromStoredValue(context)
