@@ -1,5 +1,6 @@
 package com.mondiro.timeralarm
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -7,15 +8,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 
 /**
- * Kích hoạt màn hình nhắc TOÀN MÀN HÌNH đúng chuẩn Android: thay vì gọi thẳng
- * startActivity() từ 1 BroadcastReceiver (bị hệ thống chặn/giới hạn khi app đang ở nền,
- * chỉ hiện thoáng qua rồi biến mất, không đè được lên app khác đang mở), ta đăng 1
- * Notification có "full-screen intent" - đây là cơ chế chính thức Android dành cho báo
- * thức/cuộc gọi đến, được phép mở đè lên bất kỳ app nào đang chạy (kể cả khi máy đang mở
- * khoá và dùng app khác), miễn app có quyền USE_FULL_SCREEN_INTENT (đã khai báo).
- * Màn hình sẽ đứng yên cho tới khi người dùng tự bấm nút (không tự tắt).
+ * Kích hoạt màn hình nhắc TOÀN MÀN HÌNH đúng chuẩn Android.
+ *
+ * Có 2 lớp phòng hờ để màn hình luôn tự bật lên được, kể cả khi app đang ở nền và người
+ * dùng đang dùng app khác (chat, mail...):
+ * 1. Đăng 1 Notification có "full-screen intent" (chuẩn Android cho báo thức/cuộc gọi đến).
+ * 2. Khởi động AlarmForegroundService - từ BÊN TRONG service đó gọi mở Activity, vì lúc này
+ *    tiến trình app đã được công nhận là đang hoạt động ở foreground nên không bị chặn nữa
+ *    (khác với gọi thẳng startActivity() từ 1 BroadcastReceiver khi app đang ở nền, việc này
+ *    LUÔN bị Android chặn âm thầm nếu có app khác đang hiển thị).
  */
 object AlarmNotificationHelper {
 
@@ -37,10 +41,8 @@ object AlarmNotificationHelper {
         }
     }
 
-    fun fireFullScreenAlarm(context: Context, type: String) {
+    fun buildNotification(context: Context, type: String, notifId: Int): Notification {
         ensureChannel(context)
-
-        val notifId = if (type == FullScreenAlarmActivity.TYPE_DATA_EXPIRY) NOTIF_ID_DATA_EXPIRY else NOTIF_ID_BREAKFAST
 
         val fullScreenActivityIntent = Intent(context, FullScreenAlarmActivity::class.java).apply {
             putExtra(FullScreenAlarmActivity.EXTRA_TYPE, type)
@@ -63,7 +65,7 @@ object AlarmNotificationHelper {
         else
             "Đã 11:00 - nhớ mua/đặt đồ ăn sáng cho Ba"
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+        return NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification_breakfast)
             .setContentTitle(title)
             .setContentText(text)
@@ -74,18 +76,28 @@ object AlarmNotificationHelper {
             .setSilent(true) // không cần âm thanh/rung ở lớp thông báo - phần rung (nếu có) do màn hình full tự xử lý
             .setContentIntent(fullScreenPi)
             .setFullScreenIntent(fullScreenPi, true)
+            .build()
+    }
 
+    fun fireFullScreenAlarm(context: Context, type: String) {
+        val notifId = if (type == FullScreenAlarmActivity.TYPE_DATA_EXPIRY) NOTIF_ID_DATA_EXPIRY else NOTIF_ID_BREAKFAST
+
+        val notification = buildNotification(context, type, notifId)
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(notifId, builder.build())
+        manager.notify(notifId, notification)
 
-        // Thử mở thẳng màn hình full ngay lập tức (không chờ người dùng bấm vào thông báo).
-        // Cách này thường thành công khi màn hình đang tắt/khoá; khi máy đang mở khoá và dùng app
-        // khác, hệ điều hành có thể chặn - lúc đó full-screen intent ở trên vẫn là phương án chính.
+        // Khởi động Foreground Service để mở thẳng màn hình full ngay lập tức, kể cả khi app
+        // đang ở nền và người dùng đang dùng app khác - xem giải thích chi tiết trong
+        // AlarmForegroundService.
+        val serviceIntent = Intent(context, AlarmForegroundService::class.java).apply {
+            putExtra(FullScreenAlarmActivity.EXTRA_TYPE, type)
+            putExtra(FullScreenAlarmActivity.EXTRA_NOTIF_ID, notifId)
+        }
         try {
-            context.startActivity(fullScreenActivityIntent)
+            ContextCompat.startForegroundService(context, serviceIntent)
         } catch (_: Exception) {
-            // Bị chặn do hạn chế "background activity start" của Android - bỏ qua, đã có
-            // full-screen intent của Notification lo phần này.
+            // Trường hợp hiếm gặp máy vẫn chặn - thông báo full-screen intent ở trên vẫn là
+            // phương án dự phòng, người dùng bấm vào thông báo vẫn mở được màn hình.
         }
     }
 

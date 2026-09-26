@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:allowBackup="true"
@@ -51,6 +53,19 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <!-- Service ngắn dùng để "mượn" quyền mở Activity từ nền: khi AlarmManager kích hoạt lúc app
+             đang ở nền, Android chặn việc mở thẳng 1 Activity đè lên app khác (background activity
+             launch restriction) - nhưng 1 Foreground Service thì được phép, nên ta khởi động service
+             này, rồi TỪ BÊN TRONG nó mới gọi mở màn hình full, sau đó service tự dừng ngay. -->
+        <service
+            android:name=".AlarmForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Mo man hinh nhac nho toan man hinh dung gio" />
+        </service>
 
     </application>
 </manifest>
