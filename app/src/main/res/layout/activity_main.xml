@@ -132,6 +132,16 @@
                 android:backgroundTint="@color/surface"
                 android:textColor="@color/accent"
                 android:layout_marginTop="12dp" />
+
+            <Button
+                android:id="@+id/btnTestDataExpiry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_test_data_expiry"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/surface"
+                android:textColor="@color/accent"
+                android:layout_marginTop="8dp" />
         </LinearLayout>
 
     </LinearLayout>

@@ -33,15 +33,6 @@
         android:layout_height="56dp"
         android:text="@string/btn_dismiss"
         android:backgroundTint="@color/accent"
-        android:textColor="@color/text_primary"
-        android:layout_marginBottom="12dp" />
-
-    <Button
-        android:id="@+id/btnSnooze"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="@string/btn_snooze"
-        android:backgroundTint="@color/surface"
         android:textColor="@color/text_primary" />
 
     <TextView

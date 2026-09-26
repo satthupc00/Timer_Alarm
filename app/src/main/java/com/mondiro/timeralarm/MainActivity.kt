@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvExpiryStatus: TextView
     private lateinit var btnRescan: Button
     private lateinit var btnTestFullScreen: Button
+    private lateinit var btnTestDataExpiry: Button
 
     private val bgExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         tvExpiryStatus = findViewById(R.id.tvExpiryStatus)
         btnRescan = findViewById(R.id.btnRescan)
         btnTestFullScreen = findViewById(R.id.btnTestFullScreen)
+        btnTestDataExpiry = findViewById(R.id.btnTestDataExpiry)
 
         val prefs = Prefs.get(this)
         switchBreakfast.isChecked = prefs.getBoolean(Prefs.KEY_BREAKFAST_ON, false)
@@ -97,11 +99,15 @@ class MainActivity : AppCompatActivity() {
         btnTestFullScreen.setOnClickListener {
             AlarmNotificationHelper.fireFullScreenAlarm(this, FullScreenAlarmActivity.TYPE_BREAKFAST)
         }
+        btnTestDataExpiry.setOnClickListener {
+            AlarmNotificationHelper.fireFullScreenAlarm(this, FullScreenAlarmActivity.TYPE_DATA_EXPIRY)
+        }
 
         if (switchData.isChecked && !hasReceiveSmsPermission()) {
             requestNeededPermissions()
         }
         requestNotificationPermissionIfNeeded()
+        requestFullScreenIntentPermissionIfNeeded()
     }
 
     override fun onResume() {
@@ -160,6 +166,17 @@ class MainActivity : AppCompatActivity() {
             ) {
                 permissionLauncher.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
             }
+        }
+    }
+
+    private fun requestFullScreenIntentPermissionIfNeeded() {
+        if (!AlarmNotificationHelper.hasFullScreenIntentPermission(this)) {
+            Toast.makeText(
+                this,
+                "Cần bật quyền \"Hiển thị toàn màn hình\" để màn hình báo tự bật lên được, không cần bấm vào thông báo",
+                Toast.LENGTH_LONG
+            ).show()
+            AlarmNotificationHelper.openFullScreenIntentSettings(this)
         }
     }
 }

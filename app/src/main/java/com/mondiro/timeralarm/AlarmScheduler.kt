@@ -16,7 +16,6 @@ object Prefs {
     const val KEY_DATA_ON = "data_on"
     const val KEY_EXPIRY_TIMESTAMP = "expiry_timestamp" // millis, 0 = none
     const val KEY_LAST_REMINDER_STAGE = "last_reminder_stage" // 0 = none sent yet
-    const val KEY_BREAKFAST_DISMISSED_DATE = "breakfast_dismissed_date" // "yyyy-MM-dd" của ngày đã bấm "Đã hiểu"
 }
 
 /**

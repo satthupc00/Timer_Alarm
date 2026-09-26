@@ -1,7 +1,5 @@
 package com.mondiro.timeralarm
 
-import android.media.AudioAttributes
-import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -21,7 +19,6 @@ class FullScreenAlarmActivity : AppCompatActivity() {
         const val TYPE_DATA_EXPIRY = "data_expiry"
     }
 
-    private var mediaPlayer: android.media.MediaPlayer? = null
     private var vibrator: Vibrator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,50 +48,25 @@ class FullScreenAlarmActivity : AppCompatActivity() {
         if (type == TYPE_DATA_EXPIRY) {
             tvTitle.text = getString(R.string.data_title)
             tvSubtitle.text = "Gói 3G sắp hoặc đã hết hạn. Kiểm tra và mua gói mới nhé."
-            // Nhắc data: chỉ hiện màn hình, không kêu chuông (theo yêu cầu)
+            // Nhắc data: chỉ hiện màn hình, không rung không kêu (theo yêu cầu)
         } else {
             tvTitle.text = getString(R.string.breakfast_title)
             tvSubtitle.text = "Đã 11:00 — nhớ đặt/mua đồ ăn sáng cho Ba."
-            playAlarmSoundAndVibrate()
+            // Không phát âm thanh nữa (theo yêu cầu) - chỉ rung nhẹ để báo hiệu
+            vibrate()
         }
 
+        // Chỉ còn 1 nút "Đã hiểu": tắt màn hình hiện tại tạm thời, KHÔNG dừng lịch nhắc -
+        // app vẫn tiếp tục nhắc lại theo đúng lịch (10p/lần tới 12h, hoặc 6h/lần cho tới khi gia hạn).
+        // Muốn ngưng hẳn thì tắt công tắc tính năng tương ứng ở màn hình chính.
         findViewById<Button>(R.id.btnDismiss).setOnClickListener {
-            stopAlarmEffects()
-            if (notifId != -1) AlarmNotificationHelper.cancel(this, notifId)
-            if (type != TYPE_DATA_EXPIRY) {
-                // Bấm "Đã hiểu" cho mục đồ ăn sáng -> đánh dấu đã tắt hôm nay, dừng luôn vòng lặp nhắc mỗi 10 phút
-                Prefs.get(this).edit()
-                    .putString(Prefs.KEY_BREAKFAST_DISMISSED_DATE, BreakfastAlarmReceiver.todayDateString())
-                    .apply()
-                AlarmScheduler.cancelBreakfastRepeat(this)
-            }
-            finish()
-        }
-        findViewById<Button>(R.id.btnSnooze).setOnClickListener {
-            stopAlarmEffects()
+            vibrator?.cancel()
             if (notifId != -1) AlarmNotificationHelper.cancel(this, notifId)
             finish()
         }
     }
 
-    private fun playAlarmSoundAndVibrate() {
-        try {
-            val uri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM)
-                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            mediaPlayer = android.media.MediaPlayer().apply {
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build()
-                )
-                setDataSource(this@FullScreenAlarmActivity, uri)
-                isLooping = true
-                prepare()
-                start()
-            }
-        } catch (_: Exception) { /* thiết bị không có ringtone hợp lệ - bỏ qua */ }
-
+    private fun vibrate() {
         vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             (getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
         } else {
@@ -110,14 +82,8 @@ class FullScreenAlarmActivity : AppCompatActivity() {
         }
     }
 
-    private fun stopAlarmEffects() {
-        mediaPlayer?.let { if (it.isPlaying) it.stop(); it.release() }
-        mediaPlayer = null
-        vibrator?.cancel()
-    }
-
     override fun onDestroy() {
-        stopAlarmEffects()
+        vibrator?.cancel()
         super.onDestroy()
     }
 }

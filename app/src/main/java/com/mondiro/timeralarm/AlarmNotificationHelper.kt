@@ -71,19 +71,48 @@ object AlarmNotificationHelper {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(false)
             .setOngoing(true) // không cho vuốt tắt thông báo tuỳ tiện, phải bấm "Đã hiểu" trong màn hình
+            .setSilent(true) // không cần âm thanh/rung ở lớp thông báo - phần rung (nếu có) do màn hình full tự xử lý
             .setContentIntent(fullScreenPi)
             .setFullScreenIntent(fullScreenPi, true)
 
-        if (type == FullScreenAlarmActivity.TYPE_DATA_EXPIRY) {
-            builder.setSilent(true) // nhắc data: chỉ hiện màn hình, không kêu chuông
-        }
-
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(notifId, builder.build())
+
+        // Thử mở thẳng màn hình full ngay lập tức (không chờ người dùng bấm vào thông báo).
+        // Cách này thường thành công khi màn hình đang tắt/khoá; khi máy đang mở khoá và dùng app
+        // khác, hệ điều hành có thể chặn - lúc đó full-screen intent ở trên vẫn là phương án chính.
+        try {
+            context.startActivity(fullScreenActivityIntent)
+        } catch (_: Exception) {
+            // Bị chặn do hạn chế "background activity start" của Android - bỏ qua, đã có
+            // full-screen intent của Notification lo phần này.
+        }
     }
 
     fun cancel(context: Context, notifId: Int) {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.cancel(notifId)
+    }
+
+    /**
+     * Từ Android 14 (API 34) trở lên, quyền USE_FULL_SCREEN_INTENT không tự động có hiệu lực -
+     * nhiều máy mặc định TẮT, người dùng phải tự bật trong Cài đặt hệ thống thì màn hình full mới
+     * tự bật lên được (nếu không, chỉ bấm vào thông báo mới mở được).
+     */
+    fun hasFullScreenIntentPermission(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT < 34) return true // các bản cũ hơn không cần xin riêng
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return manager.canUseFullScreenIntent()
+    }
+
+    fun openFullScreenIntentSettings(context: Context) {
+        if (Build.VERSION.SDK_INT < 34) return
+        try {
+            val intent = Intent(android.provider.Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT).apply {
+                data = android.net.Uri.parse("package:${context.packageName}")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(intent)
+        } catch (_: Exception) { /* máy không hỗ trợ màn hình cài đặt này - bỏ qua */ }
     }
 }
