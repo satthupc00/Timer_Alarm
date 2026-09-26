@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var switchData: SwitchMaterial
     private lateinit var tvExpiryStatus: TextView
     private lateinit var btnRescan: Button
+    private lateinit var btnTestFullScreen: Button
 
     private val bgExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         switchData = findViewById(R.id.switchData)
         tvExpiryStatus = findViewById(R.id.tvExpiryStatus)
         btnRescan = findViewById(R.id.btnRescan)
+        btnTestFullScreen = findViewById(R.id.btnTestFullScreen)
 
         val prefs = Prefs.get(this)
         switchBreakfast.isChecked = prefs.getBoolean(Prefs.KEY_BREAKFAST_ON, false)
@@ -90,6 +92,10 @@ class MainActivity : AppCompatActivity() {
             } else {
                 rescanPermissionLauncher.launch(Manifest.permission.READ_SMS)
             }
+        }
+
+        btnTestFullScreen.setOnClickListener {
+            AlarmNotificationHelper.fireFullScreenAlarm(this, FullScreenAlarmActivity.TYPE_BREAKFAST)
         }
 
         if (switchData.isChecked && !hasReceiveSmsPermission()) {

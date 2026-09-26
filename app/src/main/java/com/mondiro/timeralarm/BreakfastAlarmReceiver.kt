@@ -28,14 +28,8 @@ class BreakfastAlarmReceiver : BroadcastReceiver() {
         val pastNoon = now.get(Calendar.HOUR_OF_DAY) >= 12
         if (pastNoon) return // đã qua 12:00 - dừng nhắc lặp cho hôm nay
 
-        // Mở màn hình nhắc toàn màn hình
-        val fullScreenIntent = Intent(context, FullScreenAlarmActivity::class.java).apply {
-            putExtra(FullScreenAlarmActivity.EXTRA_TYPE, FullScreenAlarmActivity.TYPE_BREAKFAST)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_NO_USER_ACTION
-        }
-        context.startActivity(fullScreenIntent)
+        // Mở màn hình nhắc toàn màn hình (qua full-screen notification, đè được lên app khác)
+        AlarmNotificationHelper.fireFullScreenAlarm(context, FullScreenAlarmActivity.TYPE_BREAKFAST)
 
         // Chưa tắt & chưa quá 12:00 -> hẹn nhắc lại sau 10 phút nữa
         AlarmScheduler.scheduleBreakfastRepeat(context, System.currentTimeMillis() + 10 * 60 * 1000)

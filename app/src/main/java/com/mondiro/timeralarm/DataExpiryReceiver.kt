@@ -13,13 +13,7 @@ class DataExpiryReceiver : BroadcastReceiver() {
         if (expiry <= 0L) return
 
         // Hiện nhắc nhở toàn màn hình, KHÔNG kêu chuông (theo yêu cầu: screen-only, no sound)
-        val fullScreenIntent = Intent(context, FullScreenAlarmActivity::class.java).apply {
-            putExtra(FullScreenAlarmActivity.EXTRA_TYPE, FullScreenAlarmActivity.TYPE_DATA_EXPIRY)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_NO_USER_ACTION
-        }
-        context.startActivity(fullScreenIntent)
+        AlarmNotificationHelper.fireFullScreenAlarm(context, FullScreenAlarmActivity.TYPE_DATA_EXPIRY)
 
         // Đặt lịch kiểm tra/nhắc kế tiếp (mỗi 6h cho tới khi phát hiện SMS gia hạn)
         AlarmScheduler.rescheduleDataExpiryFromStoredValue(context)

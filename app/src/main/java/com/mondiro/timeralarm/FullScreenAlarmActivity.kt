@@ -16,6 +16,7 @@ class FullScreenAlarmActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_TYPE = "extra_type"
+        const val EXTRA_NOTIF_ID = "extra_notif_id"
         const val TYPE_BREAKFAST = "breakfast"
         const val TYPE_DATA_EXPIRY = "data_expiry"
     }
@@ -43,6 +44,7 @@ class FullScreenAlarmActivity : AppCompatActivity() {
         setContentView(R.layout.activity_full_screen_alarm)
 
         val type = intent.getStringExtra(EXTRA_TYPE) ?: TYPE_BREAKFAST
+        val notifId = intent.getIntExtra(EXTRA_NOTIF_ID, -1)
         val tvTitle = findViewById<TextView>(R.id.tvAlarmTitle)
         val tvSubtitle = findViewById<TextView>(R.id.tvAlarmSubtitle)
 
@@ -58,6 +60,7 @@ class FullScreenAlarmActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnDismiss).setOnClickListener {
             stopAlarmEffects()
+            if (notifId != -1) AlarmNotificationHelper.cancel(this, notifId)
             if (type != TYPE_DATA_EXPIRY) {
                 // Bấm "Đã hiểu" cho mục đồ ăn sáng -> đánh dấu đã tắt hôm nay, dừng luôn vòng lặp nhắc mỗi 10 phút
                 Prefs.get(this).edit()
@@ -69,6 +72,7 @@ class FullScreenAlarmActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btnSnooze).setOnClickListener {
             stopAlarmEffects()
+            if (notifId != -1) AlarmNotificationHelper.cancel(this, notifId)
             finish()
         }
     }
