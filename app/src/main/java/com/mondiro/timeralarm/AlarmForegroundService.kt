@@ -29,13 +29,14 @@ class AlarmForegroundService : Service() {
         val notification = AlarmNotificationHelper.buildNotification(this, type, notifId)
         startForeground(if (notifId > 0) notifId else 9999, notification)
 
-        val activityIntent = Intent(this, FullScreenAlarmActivity::class.java).apply {
-            putExtra(FullScreenAlarmActivity.EXTRA_TYPE, type)
-            putExtra(FullScreenAlarmActivity.EXTRA_NOTIF_ID, notifId)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_NO_USER_ACTION
-        }
+        val activityIntent = Intent(this, FullScreenAlarmActivity::class.java)
+        activityIntent.putExtra(FullScreenAlarmActivity.EXTRA_TYPE, type)
+        activityIntent.putExtra(FullScreenAlarmActivity.EXTRA_NOTIF_ID, notifId)
+        activityIntent.setFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                Intent.FLAG_ACTIVITY_NO_USER_ACTION
+        )
         try {
             startActivity(activityIntent)
         } catch (_: Exception) {
