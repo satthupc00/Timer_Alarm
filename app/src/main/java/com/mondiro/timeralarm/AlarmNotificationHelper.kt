@@ -11,15 +11,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 
 /**
- * Kích hoạt màn hình nhắc TOÀN MÀN HÌNH đúng chuẩn Android.
+ * Đăng thông báo báo thức + khởi động AlarmForegroundService để hiện màn hình full.
  *
- * Có 2 lớp phòng hờ để màn hình luôn tự bật lên được, kể cả khi app đang ở nền và người
- * dùng đang dùng app khác (chat, mail...):
- * 1. Đăng 1 Notification có "full-screen intent" (chuẩn Android cho báo thức/cuộc gọi đến).
- * 2. Khởi động AlarmForegroundService - từ BÊN TRONG service đó gọi mở Activity, vì lúc này
- *    tiến trình app đã được công nhận là đang hoạt động ở foreground nên không bị chặn nữa
- *    (khác với gọi thẳng startActivity() từ 1 BroadcastReceiver khi app đang ở nền, việc này
- *    LUÔN bị Android chặn âm thầm nếu có app khác đang hiển thị).
+ * Lưu ý quan trọng (đúng theo tài liệu Android): full-screen intent của thông báo CHỈ tự bật Activity
+ * khi máy đang tắt màn hình / đang khoá. Khi máy đang được dùng bình thường, hệ thống chỉ hiện banner
+ * và KHÔNG tự bật Activity. Lúc đó AlarmForegroundService sẽ vẽ overlay toàn màn hình (cần quyền
+ * "Hiển thị trên các ứng dụng khác") để vẫn đè được lên app đang dùng.
  */
 object AlarmNotificationHelper {
 
@@ -85,6 +82,7 @@ object AlarmNotificationHelper {
         val notification = buildNotification(context, type, notifId)
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(notifId, notification)
+        DiagLog.add(context, "Đã đăng thông báo báo (loại=$type)")
 
         // Khởi động Foreground Service để mở thẳng màn hình full ngay lập tức, kể cả khi app
         // đang ở nền và người dùng đang dùng app khác - xem giải thích chi tiết trong
@@ -95,7 +93,9 @@ object AlarmNotificationHelper {
         }
         try {
             ContextCompat.startForegroundService(context, serviceIntent)
-        } catch (_: Exception) {
+            DiagLog.add(context, "Đã gửi lệnh khởi động service")
+        } catch (e: Exception) {
+            DiagLog.add(context, "startForegroundService LỖI: ${e.javaClass.simpleName}: ${e.message}")
             // Trường hợp hiếm gặp máy vẫn chặn - thông báo full-screen intent ở trên vẫn là
             // phương án dự phòng, người dùng bấm vào thông báo vẫn mở được màn hình.
         }

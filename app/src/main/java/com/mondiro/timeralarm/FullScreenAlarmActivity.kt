@@ -2,14 +2,13 @@ package com.mondiro.timeralarm
 
 import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
 import android.os.Vibrator
-import android.os.VibratorManager
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.TextView
 
+/** Màn hình báo dạng Activity - dùng khi máy đang tắt màn hình / khoá (hiện đè lên màn hình khoá). */
 class FullScreenAlarmActivity : AppCompatActivity() {
 
     companion object {
@@ -42,6 +41,7 @@ class FullScreenAlarmActivity : AppCompatActivity() {
 
         val type = intent.getStringExtra(EXTRA_TYPE) ?: TYPE_BREAKFAST
         val notifId = intent.getIntExtra(EXTRA_NOTIF_ID, -1)
+        DiagLog.add(this, "✅ Màn hình full (Activity) đã hiển thị (loại=$type)")
         val tvTitle = findViewById<TextView>(R.id.tvAlarmTitle)
         val tvSubtitle = findViewById<TextView>(R.id.tvAlarmSubtitle)
 
@@ -52,33 +52,16 @@ class FullScreenAlarmActivity : AppCompatActivity() {
         } else {
             tvTitle.text = getString(R.string.breakfast_title)
             tvSubtitle.text = "Đã 11:00 — nhớ đặt/mua đồ ăn sáng cho Ba."
-            // Không phát âm thanh nữa (theo yêu cầu) - chỉ rung nhẹ để báo hiệu
-            vibrate()
+            // Không phát âm thanh (theo yêu cầu) - chỉ rung nhẹ để báo hiệu
+            vibrator = AlarmVibration.start(this)
         }
 
-        // Chỉ còn 1 nút "Đã hiểu": tắt màn hình hiện tại tạm thời, KHÔNG dừng lịch nhắc -
-        // app vẫn tiếp tục nhắc lại theo đúng lịch (10p/lần tới 12h, hoặc 6h/lần cho tới khi gia hạn).
+        // Chỉ 1 nút "Đã hiểu": tắt màn hình hiện tại tạm thời, KHÔNG dừng lịch nhắc.
         // Muốn ngưng hẳn thì tắt công tắc tính năng tương ứng ở màn hình chính.
         findViewById<Button>(R.id.btnDismiss).setOnClickListener {
             vibrator?.cancel()
             if (notifId != -1) AlarmNotificationHelper.cancel(this, notifId)
             finish()
-        }
-    }
-
-    private fun vibrate() {
-        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            (getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
-        } else {
-            @Suppress("DEPRECATION")
-            getSystemService(VIBRATOR_SERVICE) as Vibrator
-        }
-        val pattern = longArrayOf(0, 500, 500)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator?.vibrate(pattern, 0)
         }
     }
 

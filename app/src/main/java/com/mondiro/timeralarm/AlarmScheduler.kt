@@ -28,6 +28,36 @@ object AlarmScheduler {
     private const val REQ_BREAKFAST = 1001
     private const val REQ_DATA_EXPIRY = 1002
     private const val REQ_BREAKFAST_REPEAT = 1003
+    private const val REQ_TEST_BREAKFAST = 1101
+    private const val REQ_TEST_DATA = 1102
+
+    /** Cờ đánh dấu lần chạy này là TEST (bỏ qua kiểm tra giờ/công tắc, không đụng tới lịch thật). */
+    const val EXTRA_TEST = "extra_test"
+
+    /**
+     * Hẹn 1 lần báo TEST sau delayMs mili-giây, đi qua ĐÚNG đường báo thật:
+     * AlarmManager -> BroadcastReceiver chạy ngầm -> thông báo -> service -> hiện màn hình full.
+     * (Khác với nút test nhanh gọi thẳng từ trong app đang mở - đường đó không phản ánh lúc báo thật.)
+     */
+    fun scheduleTestAlarm(context: Context, type: String, delayMs: Long): Boolean {
+        val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val isData = type == FullScreenAlarmActivity.TYPE_DATA_EXPIRY
+        val target = if (isData) DataExpiryReceiver::class.java else BreakfastAlarmReceiver::class.java
+        val intent = Intent(context, target)
+        intent.putExtra(EXTRA_TEST, true)
+        val pi = PendingIntent.getBroadcast(
+            context, if (isData) REQ_TEST_DATA else REQ_TEST_BREAKFAST, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        return try {
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayMs, pi)
+            DiagLog.add(context, "Đã hẹn TEST báo ${if (isData) "hết hạn 3G" else "đồ ăn sáng"} sau ${delayMs / 1000} giây")
+            true
+        } catch (e: SecurityException) {
+            DiagLog.add(context, "Hẹn giờ TEST LỖI (thiếu quyền báo thức chính xác): ${e.message}")
+            false
+        }
+    }
 
     // ---------- Breakfast: nhắc hằng ngày lúc 11:00 ----------
 
