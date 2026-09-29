@@ -66,16 +66,6 @@
                 android:layout_marginTop="8dp" />
 
             <Button
-                android:id="@+id/btnTestFullScreen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/btn_test_fullscreen"
-                android:textAllCaps="false"
-                android:backgroundTint="@color/surface"
-                android:textColor="@color/accent"
-                android:layout_marginTop="12dp" />
-
-            <Button
                 android:id="@+id/btnTestRealBreakfast"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,7 +73,7 @@
                 android:textAllCaps="false"
                 android:backgroundTint="@color/surface"
                 android:textColor="@color/accent"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="12dp" />
         </LinearLayout>
 
         <!-- Card 2: Data expiry -->
@@ -142,16 +132,6 @@
                 android:backgroundTint="@color/surface"
                 android:textColor="@color/accent"
                 android:layout_marginTop="12dp" />
-
-            <Button
-                android:id="@+id/btnTestDataExpiry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/btn_test_data_expiry"
-                android:textAllCaps="false"
-                android:backgroundTint="@color/surface"
-                android:textColor="@color/accent"
-                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/btnTestRealData"
@@ -254,6 +234,45 @@
                 android:backgroundTint="@color/surface"
                 android:textColor="@color/accent"
                 android:layout_marginTop="12dp" />
+        </LinearLayout>
+
+        <!-- Card 5: Âm thanh khi báo (áp dụng cho cả 2 mục nhắc) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="16dp"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sound_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchSound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sound_desc"
+                android:textColor="@color/text_dim"
+                android:textSize="13sp"
+                android:layout_marginTop="8dp" />
         </LinearLayout>
 
     </LinearLayout>

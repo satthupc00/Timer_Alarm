@@ -2,11 +2,11 @@
     <string name="app_name">Timer Alarm</string>
     <string name="watermark">Created by Mondiro</string>
 
-    <string name="breakfast_title">Nhắc mua đồ sáng cho Ba</string>
-    <string name="breakfast_desc">Bật để mỗi ngày lúc 11:00 sáng, app sẽ hiện nhắc nhở toàn màn hình mua/đặt đồ ăn sáng cho Ba.</string>
+    <string name="breakfast_title">Mua đồ ăn sáng cho ba</string>
+    <string name="breakfast_desc">Báo từ 11g, 15p báo 1 lần tới 12g tự kết thúc nhắc</string>
 
-    <string name="data_title">Nhắc hết hạn gói 3G Mobifone</string>
-    <string name="data_desc">Tự động đọc SMS từ Mobifone (đầu số 9199) để phát hiện ngày hết hạn gói data, không cần nhập tay. Sẽ nhắc trước 1 ngày (chỉ hiện màn hình, không kêu chuông), sau đó lặp lại mỗi 6 tiếng cho tới khi phát hiện SMS xác nhận đã mua gói mới.</string>
+    <string name="data_title">Nạp 3G/4G</string>
+    <string name="data_desc">báo trước 1 ngày, sau cứ 6h nhắc lại 1 lần cho đến khi có gói mới</string>
     <string name="data_status_none">Chưa phát hiện gói data nào từ SMS.</string>
     <string name="btn_rescan">🔄 Quét lại tin nhắn cũ</string>
     <string name="rescan_need_permission">Cần cấp quyền đọc SMS để quét tin nhắn cũ.</string>
@@ -14,9 +14,7 @@
     <string name="rescan_found">Đã tìm thấy và cập nhật ngày hết hạn từ tin nhắn cũ.</string>
 
     <string name="btn_dismiss">Đã hiểu</string>
-    <string name="btn_test_fullscreen">🔔 Test nhanh (ngay trong app)</string>
-    <string name="btn_test_data_expiry">🔔 Test nhanh (ngay trong app)</string>
-    <string name="btn_test_real">⏱ Test đúng quy trình thật (sau 15 giây)</string>
+    <string name="btn_test_real">Test</string>
     <string name="test_real_scheduled">Đã hẹn 15 giây. Giờ hãy khoá màn hình, hoặc mở app khác (chat, mail...) rồi chờ.</string>
     <string name="test_real_failed">Không hẹn được giờ (thiếu quyền báo thức chính xác).</string>
 
@@ -28,6 +26,9 @@
     <string name="perm_fsi_bad">❌ Toàn màn hình khi khoá máy: CHƯA bật — bấm để bật</string>
     <string name="perm_batt_ok">✅ Không hạn chế pin: đã bật</string>
     <string name="perm_batt_bad">❌ Không hạn chế pin: CHƯA bật — bấm để bật</string>
+
+    <string name="sound_title">Âm thanh khi báo</string>
+    <string name="sound_desc">Bật thêm chuông báo (ngoài rung) cho cả 2 mục nhắc phía trên.</string>
 
     <string name="diag_title">Chẩn đoán</string>
     <string name="diag_desc">Nhật ký ghi lại từng bước mỗi lần báo, giúp tìm nguyên nhân nếu màn hình không tự bật.</string>

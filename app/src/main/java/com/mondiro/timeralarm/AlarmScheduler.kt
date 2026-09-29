@@ -16,6 +16,7 @@ object Prefs {
     const val KEY_DATA_ON = "data_on"
     const val KEY_EXPIRY_TIMESTAMP = "expiry_timestamp" // millis, 0 = none
     const val KEY_LAST_REMINDER_STAGE = "last_reminder_stage" // 0 = none sent yet
+    const val KEY_SOUND_ON = "sound_on" // bật thêm chuông báo (ngoài rung) cho cả 2 mục nhắc
 }
 
 /**
@@ -84,7 +85,7 @@ object AlarmScheduler {
         cancelBreakfastRepeat(context)
     }
 
-    // ---------- Breakfast: nhắc lặp lại mỗi 10 phút (từ 11:00 tới 12:00) nếu chưa bấm "Đã hiểu" ----------
+    // ---------- Breakfast: nhắc lặp lại mỗi 15 phút (từ 11:00 tới 12:00) nếu chưa bấm "Đã hiểu" ----------
 
     fun scheduleBreakfastRepeat(context: Context, atMillis: Long) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

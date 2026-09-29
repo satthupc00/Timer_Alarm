@@ -1,5 +1,6 @@
 package com.mondiro.timeralarm
 
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
@@ -19,6 +20,7 @@ class FullScreenAlarmActivity : AppCompatActivity() {
     }
 
     private var vibrator: Vibrator? = null
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,18 +50,22 @@ class FullScreenAlarmActivity : AppCompatActivity() {
         if (type == TYPE_DATA_EXPIRY) {
             tvTitle.text = getString(R.string.data_title)
             tvSubtitle.text = "Gói 3G sắp hoặc đã hết hạn. Kiểm tra và mua gói mới nhé."
-            // Nhắc data: chỉ hiện màn hình, không rung không kêu (theo yêu cầu)
         } else {
             tvTitle.text = getString(R.string.breakfast_title)
             tvSubtitle.text = "Đã 11:00 — nhớ đặt/mua đồ ăn sáng cho Ba."
-            // Không phát âm thanh (theo yêu cầu) - chỉ rung nhẹ để báo hiệu
-            vibrator = AlarmVibration.start(this)
+        }
+        // Luôn rung; chuông báo thì tuỳ theo công tắc "Âm thanh khi báo" (áp dụng cho cả 2 mục)
+        vibrator = AlarmVibration.start(this)
+        if (Prefs.get(this).getBoolean(Prefs.KEY_SOUND_ON, false)) {
+            mediaPlayer = AlarmSound.start(this)
         }
 
         // Chỉ 1 nút "Đã hiểu": tắt màn hình hiện tại tạm thời, KHÔNG dừng lịch nhắc.
         // Muốn ngưng hẳn thì tắt công tắc tính năng tương ứng ở màn hình chính.
         findViewById<Button>(R.id.btnDismiss).setOnClickListener {
             vibrator?.cancel()
+            AlarmSound.stop(mediaPlayer)
+            mediaPlayer = null
             if (notifId != -1) AlarmNotificationHelper.cancel(this, notifId)
             finish()
         }
@@ -67,6 +73,7 @@ class FullScreenAlarmActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         vibrator?.cancel()
+        AlarmSound.stop(mediaPlayer)
         super.onDestroy()
     }
 }

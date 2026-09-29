@@ -31,14 +31,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var switchData: SwitchMaterial
     private lateinit var tvExpiryStatus: TextView
     private lateinit var btnRescan: Button
-    private lateinit var btnTestFullScreen: Button
-    private lateinit var btnTestDataExpiry: Button
     private lateinit var btnTestRealBreakfast: Button
     private lateinit var btnTestRealData: Button
     private lateinit var btnPermOverlay: Button
     private lateinit var btnPermFsi: Button
     private lateinit var btnPermBattery: Button
     private lateinit var btnShowLog: Button
+    private lateinit var switchSound: SwitchMaterial
 
     private val bgExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -70,14 +69,13 @@ class MainActivity : AppCompatActivity() {
         switchData = findViewById(R.id.switchData)
         tvExpiryStatus = findViewById(R.id.tvExpiryStatus)
         btnRescan = findViewById(R.id.btnRescan)
-        btnTestFullScreen = findViewById(R.id.btnTestFullScreen)
-        btnTestDataExpiry = findViewById(R.id.btnTestDataExpiry)
         btnTestRealBreakfast = findViewById(R.id.btnTestRealBreakfast)
         btnTestRealData = findViewById(R.id.btnTestRealData)
         btnPermOverlay = findViewById(R.id.btnPermOverlay)
         btnPermFsi = findViewById(R.id.btnPermFsi)
         btnPermBattery = findViewById(R.id.btnPermBattery)
         btnShowLog = findViewById(R.id.btnShowLog)
+        switchSound = findViewById(R.id.switchSound)
 
         val prefs = Prefs.get(this)
         switchBreakfast.isChecked = prefs.getBoolean(Prefs.KEY_BREAKFAST_ON, false)
@@ -116,15 +114,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Test nhanh: gọi thẳng từ trong app đang mở (KHÔNG phản ánh đúng lúc báo thật ở nền)
-        btnTestFullScreen.setOnClickListener {
-            AlarmNotificationHelper.fireFullScreenAlarm(this, FullScreenAlarmActivity.TYPE_BREAKFAST)
-        }
-        btnTestDataExpiry.setOnClickListener {
-            AlarmNotificationHelper.fireFullScreenAlarm(this, FullScreenAlarmActivity.TYPE_DATA_EXPIRY)
-        }
-
-        // Test thật: hẹn giờ qua AlarmManager, đi đúng đường báo thật chạy ngầm
+        // Test: hẹn giờ qua AlarmManager, đi đúng đường báo thật chạy ngầm
         btnTestRealBreakfast.setOnClickListener { scheduleRealPathTest(FullScreenAlarmActivity.TYPE_BREAKFAST) }
         btnTestRealData.setOnClickListener { scheduleRealPathTest(FullScreenAlarmActivity.TYPE_DATA_EXPIRY) }
 
@@ -150,6 +140,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
         btnShowLog.setOnClickListener { showDiagnosticLog() }
+
+        switchSound.isChecked = prefs.getBoolean(Prefs.KEY_SOUND_ON, false)
+        switchSound.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(Prefs.KEY_SOUND_ON, isChecked).apply()
+        }
 
         if (switchData.isChecked && !hasReceiveSmsPermission()) {
             requestNeededPermissions()

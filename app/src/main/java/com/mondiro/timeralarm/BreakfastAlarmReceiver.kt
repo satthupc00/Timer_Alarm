@@ -33,10 +33,10 @@ class BreakfastAlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        // Bấm "Đã hiểu" chỉ tắt màn hình hiện tại, KHÔNG dừng vòng lặp - vẫn tiếp tục nhắc mỗi 10 phút
+        // Bấm "Đã hiểu" chỉ tắt màn hình hiện tại, KHÔNG dừng vòng lặp - vẫn tiếp tục nhắc mỗi 15 phút
         // cho tới 12:00. Muốn ngưng hẳn thì tắt công tắc tính năng này.
         AlarmNotificationHelper.fireFullScreenAlarm(context, FullScreenAlarmActivity.TYPE_BREAKFAST)
-        AlarmScheduler.scheduleBreakfastRepeat(context, System.currentTimeMillis() + 10 * 60 * 1000)
-        DiagLog.add(context, "→ đã hẹn nhắc lại sau 10 phút")
+        AlarmScheduler.scheduleBreakfastRepeat(context, System.currentTimeMillis() + 15 * 60 * 1000)
+        DiagLog.add(context, "→ đã hẹn nhắc lại sau 15 phút")
     }
 }

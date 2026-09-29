@@ -8,6 +8,7 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
+import android.media.MediaPlayer
 import android.os.Vibrator
 import android.provider.Settings
 import android.view.ContextThemeWrapper
@@ -31,6 +32,7 @@ class AlarmForegroundService : Service() {
 
     private var overlayView: View? = null
     private var vibrator: Vibrator? = null
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -102,7 +104,11 @@ class AlarmForegroundService : Service() {
             } else {
                 tvTitle.text = getString(R.string.breakfast_title)
                 tvSubtitle.text = "Đã 11:00 — nhớ đặt/mua đồ ăn sáng cho Ba."
-                vibrator = AlarmVibration.start(this)
+            }
+            // Luôn rung; chuông báo thì tuỳ theo công tắc "Âm thanh khi báo" (áp dụng cho cả 2 mục)
+            vibrator = AlarmVibration.start(this)
+            if (Prefs.get(this).getBoolean(Prefs.KEY_SOUND_ON, false)) {
+                mediaPlayer = AlarmSound.start(this)
             }
             view.findViewById<Button>(R.id.btnDismiss).setOnClickListener { dismissOverlay(notifId) }
 
@@ -127,6 +133,8 @@ class AlarmForegroundService : Service() {
         } catch (e: Exception) {
             vibrator?.cancel()
             vibrator = null
+            AlarmSound.stop(mediaPlayer)
+            mediaPlayer = null
             DiagLog.add(this, "Overlay LỖI: ${e.javaClass.simpleName}: ${e.message}")
             false
         }
@@ -136,6 +144,8 @@ class AlarmForegroundService : Service() {
         removeOverlay()
         vibrator?.cancel()
         vibrator = null
+        AlarmSound.stop(mediaPlayer)
+        mediaPlayer = null
         if (notifId != -1) AlarmNotificationHelper.cancel(this, notifId)
         DiagLog.add(this, "Đã bấm 'Đã hiểu' trên overlay")
         stopForeground(STOP_FOREGROUND_REMOVE)
@@ -155,6 +165,7 @@ class AlarmForegroundService : Service() {
     override fun onDestroy() {
         removeOverlay()
         vibrator?.cancel()
+        AlarmSound.stop(mediaPlayer)
         super.onDestroy()
     }
 }
