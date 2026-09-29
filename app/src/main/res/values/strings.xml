@@ -19,18 +19,11 @@
     <string name="test_real_failed">Không hẹn được giờ (thiếu quyền báo thức chính xác).</string>
 
     <string name="perm_title">Quyền để màn hình báo tự bật lên</string>
-    <string name="perm_desc">Khi bạn đang dùng điện thoại (đã mở khoá), Android không cho app tự bật màn hình đè lên app khác nếu chưa có quyền \"Hiển thị trên các ứng dụng khác\". Hãy bật đủ các quyền dưới đây.</string>
-    <string name="perm_overlay_ok">✅ Hiển thị trên các ứng dụng khác: đã bật</string>
-    <string name="perm_overlay_bad">❌ Hiển thị trên các ứng dụng khác: CHƯA bật — bấm để bật</string>
-    <string name="perm_fsi_ok">✅ Toàn màn hình khi khoá máy: đã bật</string>
-    <string name="perm_fsi_bad">❌ Toàn màn hình khi khoá máy: CHƯA bật — bấm để bật</string>
-    <string name="perm_batt_ok">✅ Không hạn chế pin: đã bật</string>
-    <string name="perm_batt_bad">❌ Không hạn chế pin: CHƯA bật — bấm để bật</string>
+    <string name="perm_desc">Khi bạn đang dùng điện thoại (đã mở khoá), Android không cho app tự bật màn hình đè lên app khác nếu chưa có quyền \"Hiển thị trên các ứng dụng khác\". Bấm nút bên dưới để lần lượt bật đủ các quyền cần thiết.</string>
+    <string name="perm_status_line">%1$s Hiển thị trên các ứng dụng khác\n%2$s Toàn màn hình khi khoá máy\n%3$s Không hạn chế pin</string>
+    <string name="perm_btn_all_ok">✅ Đã bật đủ quyền</string>
+    <string name="perm_btn_all_bad">Bật đủ quyền</string>
 
     <string name="sound_title">Âm thanh khi báo</string>
     <string name="sound_desc">Bật thêm chuông báo (ngoài rung) cho cả 2 mục nhắc phía trên.</string>
-
-    <string name="diag_title">Chẩn đoán</string>
-    <string name="diag_desc">Nhật ký ghi lại từng bước mỗi lần báo, giúp tìm nguyên nhân nếu màn hình không tự bật.</string>
-    <string name="btn_show_log">📋 Xem nhật ký chẩn đoán</string>
 </resources>

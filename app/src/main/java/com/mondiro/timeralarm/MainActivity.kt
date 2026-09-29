@@ -11,13 +11,10 @@ import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
-import android.view.View
 import android.widget.Button
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -33,11 +30,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnRescan: Button
     private lateinit var btnTestRealBreakfast: Button
     private lateinit var btnTestRealData: Button
-    private lateinit var btnPermOverlay: Button
-    private lateinit var btnPermFsi: Button
-    private lateinit var btnPermBattery: Button
-    private lateinit var btnShowLog: Button
+    private lateinit var tvPermStatus: TextView
+    private lateinit var btnPermAll: Button
     private lateinit var switchSound: SwitchMaterial
+
+    // true khi đang giữa chừng "bật đủ quyền": mỗi lần quay lại app, tự mở tiếp màn cài đặt
+    // của quyền kế tiếp còn thiếu, để 1 lần bấm là đi hết được cả 3 quyền.
+    private var permFlowActive = false
 
     private val bgExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -71,10 +70,8 @@ class MainActivity : AppCompatActivity() {
         btnRescan = findViewById(R.id.btnRescan)
         btnTestRealBreakfast = findViewById(R.id.btnTestRealBreakfast)
         btnTestRealData = findViewById(R.id.btnTestRealData)
-        btnPermOverlay = findViewById(R.id.btnPermOverlay)
-        btnPermFsi = findViewById(R.id.btnPermFsi)
-        btnPermBattery = findViewById(R.id.btnPermBattery)
-        btnShowLog = findViewById(R.id.btnShowLog)
+        tvPermStatus = findViewById(R.id.tvPermStatus)
+        btnPermAll = findViewById(R.id.btnPermAll)
         switchSound = findViewById(R.id.switchSound)
 
         val prefs = Prefs.get(this)
@@ -118,28 +115,10 @@ class MainActivity : AppCompatActivity() {
         btnTestRealBreakfast.setOnClickListener { scheduleRealPathTest(FullScreenAlarmActivity.TYPE_BREAKFAST) }
         btnTestRealData.setOnClickListener { scheduleRealPathTest(FullScreenAlarmActivity.TYPE_DATA_EXPIRY) }
 
-        btnPermOverlay.setOnClickListener {
-            if (Settings.canDrawOverlays(this)) {
-                Toast.makeText(this, "Quyền này đã được bật rồi", Toast.LENGTH_SHORT).show()
-            } else {
-                openOverlaySettings()
-            }
+        btnPermAll.setOnClickListener {
+            permFlowActive = true
+            advancePermissionFlow()
         }
-        btnPermFsi.setOnClickListener {
-            if (AlarmNotificationHelper.hasFullScreenIntentPermission(this)) {
-                Toast.makeText(this, "Quyền này đã được bật rồi", Toast.LENGTH_SHORT).show()
-            } else {
-                AlarmNotificationHelper.openFullScreenIntentSettings(this)
-            }
-        }
-        btnPermBattery.setOnClickListener {
-            if (isIgnoringBatteryOptimizations()) {
-                Toast.makeText(this, "Quyền này đã được bật rồi", Toast.LENGTH_SHORT).show()
-            } else {
-                requestIgnoreBatteryOptimizations()
-            }
-        }
-        btnShowLog.setOnClickListener { showDiagnosticLog() }
 
         switchSound.isChecked = prefs.getBoolean(Prefs.KEY_SOUND_ON, false)
         switchSound.setOnCheckedChangeListener { _, isChecked ->
@@ -155,7 +134,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateExpiryStatusText()
-        updatePermissionButtons()
+        updatePermissionStatus()
+        if (permFlowActive) advancePermissionFlow()
     }
 
     private fun scheduleRealPathTest(type: String) {
@@ -167,32 +147,50 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
-    // ---------- Quyền để màn hình báo tự bật ----------
+    // ---------- Quyền để màn hình báo tự bật (gộp 3 quyền vào 1 nút) ----------
 
-    private fun updatePermissionButtons() {
-        btnPermOverlay.setText(if (Settings.canDrawOverlays(this)) R.string.perm_overlay_ok else R.string.perm_overlay_bad)
-        if (Build.VERSION.SDK_INT >= 34) {
-            btnPermFsi.visibility = View.VISIBLE
-            btnPermFsi.setText(
-                if (AlarmNotificationHelper.hasFullScreenIntentPermission(this)) R.string.perm_fsi_ok else R.string.perm_fsi_bad
-            )
-        } else {
-            btnPermFsi.visibility = View.GONE
+    private fun hasOverlayPermission() = Settings.canDrawOverlays(this)
+    private fun hasFsiPermission() = AlarmNotificationHelper.hasFullScreenIntentPermission(this)
+    private fun isIgnoringBatteryOptimizations(): Boolean {
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        return pm.isIgnoringBatteryOptimizations(packageName)
+    }
+
+    private fun updatePermissionStatus() {
+        val overlayOk = hasOverlayPermission()
+        val fsiOk = hasFsiPermission()
+        val battOk = isIgnoringBatteryOptimizations()
+        tvPermStatus.text = getString(
+            R.string.perm_status_line,
+            if (overlayOk) "✅" else "❌",
+            if (fsiOk) "✅" else "❌",
+            if (battOk) "✅" else "❌"
+        )
+        val allOk = overlayOk && fsiOk && battOk
+        btnPermAll.setText(if (allOk) R.string.perm_btn_all_ok else R.string.perm_btn_all_bad)
+    }
+
+    /** Mở màn cài đặt của quyền ĐẦU TIÊN còn thiếu; nếu đã đủ cả 3 thì dừng luồng. */
+    private fun advancePermissionFlow() {
+        updatePermissionStatus()
+        when {
+            !hasOverlayPermission() -> openOverlaySettings()
+            !hasFsiPermission() -> AlarmNotificationHelper.openFullScreenIntentSettings(this)
+            !isIgnoringBatteryOptimizations() -> requestIgnoreBatteryOptimizations()
+            else -> {
+                permFlowActive = false
+                Toast.makeText(this, "Đã bật đủ quyền", Toast.LENGTH_SHORT).show()
+            }
         }
-        btnPermBattery.setText(if (isIgnoringBatteryOptimizations()) R.string.perm_batt_ok else R.string.perm_batt_bad)
     }
 
     private fun openOverlaySettings() {
         try {
             startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
         } catch (e: Exception) {
+            permFlowActive = false
             Toast.makeText(this, "Không mở được màn hình cài đặt: ${e.message}", Toast.LENGTH_LONG).show()
         }
-    }
-
-    private fun isIgnoringBatteryOptimizations(): Boolean {
-        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-        return pm.isIgnoringBatteryOptimizations(packageName)
     }
 
     private fun requestIgnoreBatteryOptimizations() {
@@ -202,29 +200,10 @@ class MainActivity : AppCompatActivity() {
             try {
                 startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             } catch (_: Exception) {
+                permFlowActive = false
                 Toast.makeText(this, "Không mở được màn hình cài đặt pin", Toast.LENGTH_LONG).show()
             }
         }
-    }
-
-    // ---------- Nhật ký chẩn đoán ----------
-
-    private fun showDiagnosticLog() {
-        val header = "Trạng thái máy hiện tại:\n${DiagLog.deviceState(this)}\n\n— Nhật ký (mới nhất ở cuối) —\n"
-        val log = DiagLog.read(this).ifBlank { "(trống)" }
-        val tv = TextView(this)
-        tv.text = header + log
-        tv.textSize = 12f
-        tv.setTextIsSelectable(true)
-        tv.setPadding(48, 32, 48, 32)
-        val scroll = ScrollView(this)
-        scroll.addView(tv)
-        AlertDialog.Builder(this)
-            .setTitle("Nhật ký chẩn đoán")
-            .setView(scroll)
-            .setPositiveButton("Đóng", null)
-            .setNeutralButton("Xoá nhật ký") { _, _ -> DiagLog.clear(this) }
-            .show()
     }
 
     private fun performRescan() {
