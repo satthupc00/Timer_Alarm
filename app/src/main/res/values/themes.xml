@@ -21,6 +21,9 @@
         <item name="android:windowIsTranslucent">false</item>
     </style>
 
+    <!-- Gốc cho các style Mondiro.* (tên có dấu chấm cần style cha) -->
+    <style name="Mondiro" />
+
     <!-- Nút phụ: nền kem, viền nhạt, icon + chữ đậm -->
     <style name="Mondiro.Button.Secondary" parent="Widget.Material3.Button.UnelevatedButton">
         <item name="android:layout_height">48dp</item>
