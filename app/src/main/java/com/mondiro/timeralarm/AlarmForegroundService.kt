@@ -16,7 +16,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.TextView
 
 /**
  * Hiện màn hình báo TOÀN MÀN HÌNH tuỳ theo trạng thái máy lúc báo:
@@ -95,16 +94,7 @@ class AlarmForegroundService : Service() {
         return try {
             val themed = ContextThemeWrapper(applicationContext, R.style.Theme_TimerAlarm)
             val view = LayoutInflater.from(themed).inflate(R.layout.activity_full_screen_alarm, null)
-            val tvTitle = view.findViewById<TextView>(R.id.tvAlarmTitle)
-            val tvSubtitle = view.findViewById<TextView>(R.id.tvAlarmSubtitle)
-
-            if (type == FullScreenAlarmActivity.TYPE_DATA_EXPIRY) {
-                tvTitle.text = getString(R.string.data_title)
-                tvSubtitle.text = "Gói 3G sắp hoặc đã hết hạn. Kiểm tra và mua gói mới nhé."
-            } else {
-                tvTitle.text = getString(R.string.breakfast_title)
-                tvSubtitle.text = "Đã 11:00 — nhớ đặt/mua đồ ăn sáng cho Ba."
-            }
+            AlarmScreenUi.bind(themed, view, type)
             // Luôn rung; chuông báo thì tuỳ theo công tắc "Âm thanh khi báo" (áp dụng cho cả 2 mục)
             vibrator = AlarmVibration.start(this)
             if (Prefs.get(this).getBoolean(Prefs.KEY_SOUND_ON, false)) {

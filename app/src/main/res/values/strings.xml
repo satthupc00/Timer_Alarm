@@ -1,29 +1,59 @@
 <resources>
     <string name="app_name">Timer Alarm</string>
     <string name="watermark">Created by Mondiro</string>
+    <string name="brand_m">Mondiro</string>
+    <string name="brand_app">Timer Alarm</string>
+    <string name="brand_desc">Nhắc đồ ăn sáng &amp; hạn gói 3G/4G</string>
+    <string name="latest">latest</string>
 
     <string name="breakfast_title">Mua đồ ăn sáng cho ba</string>
     <string name="breakfast_desc">Báo từ 11g, 15p báo 1 lần tới 12g tự kết thúc nhắc</string>
+    <string name="breakfast_sub">Mỗi ngày, tự kết thúc lúc 12:00</string>
+    <string name="chip_1100">11:00</string>
+    <string name="chip_15p">15 phút / lần</string>
+    <string name="chip_until">đến 12:00</string>
 
     <string name="data_title">Nạp 3G/4G</string>
     <string name="data_desc">báo trước 1 ngày, sau cứ 6h nhắc lại 1 lần cho đến khi có gói mới</string>
-    <string name="data_status_none">Chưa phát hiện gói data nào từ SMS.</string>
-    <string name="btn_rescan">🔄 Quét lại tin nhắn cũ</string>
+    <string name="data_sub">Báo trước 1 ngày, 6h nhắc lại 1 lần</string>
+    <string name="data_status_none">Chưa phát hiện gói data nào từ SMS</string>
+    <string name="data_status_fmt">Hết hạn: %1$s</string>
+    <string name="btn_rescan">Quét lại tin nhắn</string>
+    <string name="btn_rescanning">Đang quét…</string>
     <string name="rescan_need_permission">Cần cấp quyền đọc SMS để quét tin nhắn cũ.</string>
     <string name="rescan_not_found">Không tìm thấy tin nhắn gói data nào từ Mobifone trong hộp thư.</string>
-    <string name="rescan_found">Đã tìm thấy và cập nhật ngày hết hạn từ tin nhắn cũ.</string>
+    <string name="rescan_found">Đã cập nhật ngày hết hạn từ tin nhắn cũ.</string>
 
     <string name="btn_dismiss">Đã hiểu</string>
+    <string name="alarm_hint">Lịch nhắc vẫn giữ nguyên — tắt công tắc trong app để ngưng hẳn</string>
+    <string name="alarm_breakfast_sub">Đã 11:00 — nhớ đặt/mua đồ ăn sáng cho Ba nhé.</string>
+    <string name="alarm_data_sub">Gói 3G sắp hoặc đã hết hạn. Kiểm tra và mua gói mới nhé.</string>
+    <string name="alarm_data_sub_fmt">Gói data hết hạn lúc %1$s. Kiểm tra và mua gói mới nhé.</string>
+    <string name="alarm_data_title">Gói 3G/4G sắp hết hạn</string>
     <string name="btn_test_real">Test</string>
     <string name="test_real_scheduled">Đã hẹn 15 giây. Giờ hãy khoá màn hình, hoặc mở app khác (chat, mail...) rồi chờ.</string>
     <string name="test_real_failed">Không hẹn được giờ (thiếu quyền báo thức chính xác).</string>
 
-    <string name="perm_title">Quyền để màn hình báo tự bật lên</string>
-    <string name="perm_desc">Khi bạn đang dùng điện thoại (đã mở khoá), Android không cho app tự bật màn hình đè lên app khác nếu chưa có quyền \"Hiển thị trên các ứng dụng khác\". Bấm nút bên dưới để lần lượt bật đủ các quyền cần thiết.</string>
-    <string name="perm_status_line">%1$s Hiển thị trên các ứng dụng khác\n%2$s Toàn màn hình khi khoá máy\n%3$s Không hạn chế pin</string>
-    <string name="perm_btn_all_ok">✅ Đã bật đủ quyền</string>
+    <string name="perm_title">Quyền để màn báo tự bật</string>
+    <string name="perm_sub">Cần đủ 3 quyền để báo đè lên app khác</string>
+    <string name="perm_overlay">Hiển thị trên các ứng dụng khác</string>
+    <string name="perm_fsi">Toàn màn hình khi khoá máy</string>
+    <string name="perm_battery">Không hạn chế pin</string>
+    <string name="perm_btn_all_ok">Đã bật đủ quyền</string>
     <string name="perm_btn_all_bad">Bật đủ quyền</string>
 
     <string name="sound_title">Âm thanh khi báo</string>
-    <string name="sound_desc">Bật thêm chuông báo (ngoài rung) cho cả 2 mục nhắc phía trên.</string>
+    <string name="sound_sub">Thêm chuông (ngoài rung) cho cả 2 mục</string>
+
+    <string name="update_check">Kiểm tra bản cập nhật</string>
+    <string name="update_latest_toast">Bạn đang dùng bản mới nhất (v%1$s).</string>
+    <string name="update_failed">Không kiểm tra được bản cập nhật: %1$s</string>
+    <string name="update_available">Có bản mới v%1$s</string>
+    <string name="update_now">Cập nhật</string>
+    <string name="update_dialog_title">Mondiro Timer Alarm v%1$s</string>
+    <string name="update_install">Tải &amp; cài đặt</string>
+    <string name="update_later">Để sau</string>
+    <string name="update_downloading">Đang tải %1$d%%</string>
+    <string name="update_download_failed">Tải bản cập nhật thất bại: %1$s</string>
+    <string name="update_need_unknown_sources">Hãy cho phép \"Cài ứng dụng không rõ nguồn\" cho Timer Alarm rồi quay lại app.</string>
 </resources>

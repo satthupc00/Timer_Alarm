@@ -7,7 +7,6 @@ import android.os.Vibrator
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
-import android.widget.TextView
 
 /** Màn hình báo dạng Activity - dùng khi máy đang tắt màn hình / khoá (hiện đè lên màn hình khoá). */
 class FullScreenAlarmActivity : AppCompatActivity() {
@@ -44,16 +43,7 @@ class FullScreenAlarmActivity : AppCompatActivity() {
         val type = intent.getStringExtra(EXTRA_TYPE) ?: TYPE_BREAKFAST
         val notifId = intent.getIntExtra(EXTRA_NOTIF_ID, -1)
         DiagLog.add(this, "✅ Màn hình full (Activity) đã hiển thị (loại=$type)")
-        val tvTitle = findViewById<TextView>(R.id.tvAlarmTitle)
-        val tvSubtitle = findViewById<TextView>(R.id.tvAlarmSubtitle)
-
-        if (type == TYPE_DATA_EXPIRY) {
-            tvTitle.text = getString(R.string.data_title)
-            tvSubtitle.text = "Gói 3G sắp hoặc đã hết hạn. Kiểm tra và mua gói mới nhé."
-        } else {
-            tvTitle.text = getString(R.string.breakfast_title)
-            tvSubtitle.text = "Đã 11:00 — nhớ đặt/mua đồ ăn sáng cho Ba."
-        }
+        AlarmScreenUi.bind(this, findViewById(R.id.alarmRoot), type)
         // Luôn rung; chuông báo thì tuỳ theo công tắc "Âm thanh khi báo" (áp dụng cho cả 2 mục)
         vibrator = AlarmVibration.start(this)
         if (Prefs.get(this).getBoolean(Prefs.KEY_SOUND_ON, false)) {

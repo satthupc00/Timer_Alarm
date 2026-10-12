@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardData"
+    style="@style/Mondiro.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/badgeData"
+            style="@style/Mondiro.Badge"
+            android:background="@drawable/bg_badge_sky"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_wifi"
+            app:tint="@color/sky_ink" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Mondiro.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/data_title" />
+
+            <TextView
+                style="@style/Mondiro.CardSub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/data_sub" />
+        </LinearLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/data_title" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvExpiryStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_status_box"
+        android:drawableStart="@drawable/ic_calendar"
+        android:drawablePadding="8dp"
+        android:drawableTint="@color/sky_ink"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp"
+        android:text="@string/data_status_none"
+        android:textColor="@color/sky_ink"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRescan"
+            style="@style/Mondiro.Button.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/btn_rescan"
+            app:icon="@drawable/ic_refresh_rotate" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestRealData"
+            style="@style/Mondiro.Button.Secondary"
+            android:layout_width="wrap_content"
+            android:text="@string/btn_test_real"
+            app:icon="@drawable/ic_play" />
+    </LinearLayout>
+</LinearLayout>

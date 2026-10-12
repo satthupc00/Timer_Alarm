@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icon nhỏ cho header: cắt sát motif của icon app -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="42dp" android:height="42dp" android:viewportWidth="72" android:viewportHeight="72">
+    <path android:pathData="M16,0h40a16,16 0,0 1,16 16v40a16,16 0,0 1,-16 16h-40a16,16 0,0 1,-16 -16v-40a16,16 0,0 1,16 -16z" android:fillColor="#FFFFFF" />
+    <group android:translateX="-18" android:translateY="-17">
+        <!-- 2 chuông -->
+        <path android:pathData="M31.5,32L41,25.5M76.5,32L67,25.5" android:strokeColor="#E5383B" android:strokeWidth="7.5" android:strokeLineCap="round" android:fillColor="#00000000" />
+        <!-- bóng nhẹ -->
+        <path android:pathData="M54,33.5a26,26 0,1 1,0 52a26,26 0,1 1,0 -52z" android:fillColor="#1A8A3A20" />
+        <!-- vành đỏ -->
+        <path android:pathData="M54,31a26,26 0,1 1,0 52a26,26 0,1 1,0 -52z" android:fillColor="#E5383B" />
+        <!-- mặt kem -->
+        <path android:pathData="M54,36.5a20.5,20.5 0,1 1,0 41a20.5,20.5 0,1 1,0 -41z" android:fillColor="#FFF8EF" />
+        <!-- kim -->
+        <path android:pathData="M54,43.5V57.5L63,63" android:strokeColor="#2A2D33" android:strokeWidth="4.5" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" />
+        <path android:pathData="M54,54.8a2.8,2.8 0,1 1,0 5.6a2.8,2.8 0,1 1,0 -5.6z" android:fillColor="#2A2D33" />
+        <!-- chấm vàng -->
+        <path android:pathData="M75,69a7.5,7.5 0,1 1,0 15a7.5,7.5 0,1 1,0 -15z" android:fillColor="#FFFFFF" />
+        <path android:pathData="M75,71.2a5.3,5.3 0,1 1,0 10.6a5.3,5.3 0,1 1,0 -10.6z" android:fillColor="#F2B84B" />
+    </group>
+</vector>
