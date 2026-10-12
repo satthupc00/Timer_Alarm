@@ -11,13 +11,29 @@ android {
         applicationId = "com.mondiro.timeralarm"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
+    }
+
+    // Khoá ký cố định lấy từ GitHub Secrets (workflow giải mã ra file và truyền qua biến môi trường).
+    // Cùng 1 chữ ký thì bản mới mới cài đè được bản cũ khi tự cập nhật.
+    // Không có secret thì dùng khoá debug mặc định (chỉ để build thử).
+    val ksPath = System.getenv("SIGNING_KEYSTORE_PATH")
+    signingConfigs {
+        if (!ksPath.isNullOrBlank() && file(ksPath).exists()) {
+            create("mondiro") {
+                storeFile = file(ksPath)
+                storePassword = System.getenv("SIGNING_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS") ?: "mondiro"
+                keyPassword = System.getenv("SIGNING_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.findByName("mondiro") ?: signingConfigs.getByName("debug")
         }
     }
 
@@ -30,6 +46,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
