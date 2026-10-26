@@ -8,11 +8,11 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.mondiro.timeralarm"
+        applicationId = "com.mondiro.timer"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
     }
 
     // Khoá ký cố định lấy từ GitHub Secrets (workflow giải mã ra file và truyền qua biến môi trường).
