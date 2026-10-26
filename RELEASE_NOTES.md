@@ -1,8 +1,9 @@
-## Có gì mới trong bản 1.1
+## Có gì mới trong bản 1.2
 
-- **Giao diện mới tông sáng, nhẹ nhàng**: nền kem, card trắng bo tròn, mỗi mục nhắc có icon màu riêng (ăn sáng: cam đào, 3G/4G: xanh).
-- **Animation cho nút**: bấm nút lún nhẹ rồi bật lại, công tắc bật thì icon lắc nhẹ, các card hiện dần khi mở app, chấm quyền "pop" khi vừa cấp xong.
-- **Màn báo toàn màn hình mới**: đồng hồ lớn, vòng sóng lan và icon rung để dễ chú ý.
-- **Tối ưu Z Fold 7**: màn ngoài 1 cột, màn trong 2 cột.
-- **Icon app mới**: đồng hồ báo thức đỏ trên nền kem.
-- **Tự cập nhật**: nút kiểm tra bản cập nhật ở góc phải trên; đang dùng bản mới nhất thì hiện chữ **latest** màu xanh lá cạnh tên app.
+**Quan trọng – bản Android này là app MỚI**
+- App đã được đăng ký chính chủ với Google (Android Developer Console) để không còn bị Play Protect chặn khi cập nhật.
+- Vì vậy app đổi sang mã app mới `com.mondiro.timer`, **không cài đè lên bản cũ được** (khoá ký giữ nguyên).
+- Cách lên đời: cài `Mondiro-TimerAlarm-v1.2.apk` → mở app, cấp lại quyền (SMS, thông báo, báo thức toàn màn hình) và bật lại các nhắc nhở → kiểm tra → gỡ bản cũ.
+- Từ bản này trở đi, cập nhật sẽ cài đè bình thường.
+
+Created by Mondiro
