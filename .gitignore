@@ -3,7 +3,10 @@
 /local.properties
 /.idea
 .DS_Store
-/build
+/build/*
+# Icon app cho M AppHub (build/icon.png) vẫn được đưa lên GitHub
+!/build/icon*.png
+!/build/icon.svg
 /captures
 .externalNativeBuild
 .cxx
